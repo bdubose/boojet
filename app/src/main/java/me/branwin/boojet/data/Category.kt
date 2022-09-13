@@ -7,7 +7,7 @@ import androidx.room.Relation
 
 @Entity
 data class Category(
-    @PrimaryKey(autoGenerate = true) val id: Long,
+    @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val name: String,
     val isExpense: Boolean = true,
 )

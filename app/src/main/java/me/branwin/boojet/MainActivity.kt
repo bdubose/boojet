@@ -2,12 +2,15 @@
 
 package me.branwin.boojet
 
+import android.app.Application
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.annotation.StringRes
 import androidx.annotation.VisibleForTesting
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.MaterialTheme
@@ -17,6 +20,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -24,10 +28,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
+import me.branwin.boojet.data.Category
 import me.branwin.boojet.ui.theme.BoojetTheme
+import me.branwin.boojet.viewmodels.MainViewModel
+import me.branwin.boojet.viewmodels.MainViewModelFactory
 import java.text.NumberFormat
 
 class MainActivity : ComponentActivity() {
@@ -40,7 +47,15 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    TipTimeScreen()
+
+                    val owner = LocalViewModelStoreOwner.current
+                    owner?.let {
+                        val vm = MainViewModelFactory(
+                            LocalContext.current.applicationContext as Application
+                        ).create(MainViewModel::class.java)
+
+                        TipTimeScreen(vm)
+                    }
                 }
             }
         }
@@ -48,7 +63,7 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun TipTimeScreen() {
+fun TipTimeScreen(viewModel: MainViewModel) {
     val focusManager = LocalFocusManager.current
 
     val calcTipStr = stringResource(R.string.calculate_tip)
@@ -110,13 +125,51 @@ fun TipTimeScreen() {
             fontWeight = FontWeight.Bold,
         )
 
-        DbTestRow()
+        DbTestRow(viewModel)
     }
 }
 
 @Composable
-fun DbTestRow() {
+fun DbTestRow(viewModel: MainViewModel) {
+    Column(modifier = Modifier.padding(32.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        DbInsertRow(viewModel)
+        DbReadRow(viewModel.allCategories.collectAsState().value)
+    }
+}
 
+@Composable
+fun DbInsertRow(viewModel: MainViewModel) {
+    val focusManager = LocalFocusManager.current
+    var catName by remember { mutableStateOf("") }
+    EditNumberField(
+        R.string.text_expense_amount,
+        catName,
+        KeyboardOptions(imeAction = ImeAction.Done),
+        KeyboardActions(onDone = {
+            focusManager.clearFocus()
+            viewModel.insertCategory(Category(name = catName))
+        })
+    ) {
+        catName = it
+    }
+}
+
+@Composable
+fun DbReadRow(categories: List<Category>?) {
+    LazyColumn(
+        Modifier
+            .fillMaxWidth()
+            .padding(10.dp)) {
+        item {
+            Text("Category Name")
+        }
+
+        categories?.let {
+            items(categories) {
+                Text(it.name)
+            }
+        }
+    }
 }
 
 @Composable
@@ -167,12 +220,4 @@ internal fun calculateTip(amount: Double, tipPercent: Double = 15.0, roundUp: Bo
     var tip = tipPercent / 100 * amount
     if (roundUp) tip = kotlin.math.ceil(tip)
     return NumberFormat.getCurrencyInstance().format(tip)
-}
-
-@Preview(showBackground = true)
-@Composable
-fun DefaultPreview() {
-    BoojetTheme {
-        TipTimeScreen()
-    }
 }
