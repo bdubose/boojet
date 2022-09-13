@@ -109,7 +109,14 @@ fun TipTimeScreen() {
             fontSize = 20.sp,
             fontWeight = FontWeight.Bold,
         )
+
+        DbTestRow()
     }
+}
+
+@Composable
+fun DbTestRow() {
+
 }
 
 @Composable
