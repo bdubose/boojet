@@ -48,15 +48,15 @@ fun BoojetApp() {
 
 @Composable
 fun BoojetNavigationBar(
-    allScreens: List<BoojetDestination> = boojetTabRowScreens,
+    allScreens: List<BoojetNavbarDestination> = boojetTabRowScreens,
     currentScreen: BoojetDestination,
     onTabSelected: (BoojetDestination) -> Unit
 ) {
     NavigationBar {
         allScreens.forEach {
             NavigationBarItem(
-                icon = { Icon(Icons.Filled.Favorite, contentDescription = it.route) },
-                label = { Text(it.route) },
+                icon = { Icon(it.icon, contentDescription = it.route) },
+                label = { Text(it.label) },
                 selected = currentScreen == it,
                 onClick = { onTabSelected(it) }
             )
