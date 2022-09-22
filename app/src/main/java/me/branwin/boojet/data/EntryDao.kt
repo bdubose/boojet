@@ -14,9 +14,21 @@ interface EntryDao {
     @Update
     suspend fun update(entry: Entry)
 
-    @Query("select * from entry order by timestamp desc")
+    @Query("select * from Entry order by timestamp desc")
     fun getAll(): Flow<List<Entry>>
 
-    @Query("select * from entry where categoryId = :categoryId order by timestamp desc")
+    @Query("""
+        select e.*
+        from Entry e
+        inner join EntryCategoryCrossRef ec
+        on ec.entryId = e.entryId and ec.categoryId = :categoryId
+        order by timestamp desc""")
     fun getAllByCategory(categoryId: Long): Flow<List<Entry>>
+
+    @Transaction
+    @Query("select * from Entry order by timestamp desc")
+    fun getEntriesWithCategories(): Flow<List<EntryWithCategories>>
+
+    @Query("insert into EntryCategoryCrossRef(entryId, categoryId) values (:entryId, :categoryId)")
+    suspend fun addCategoryToEntry(entryId: Long, categoryId: Long)
 }

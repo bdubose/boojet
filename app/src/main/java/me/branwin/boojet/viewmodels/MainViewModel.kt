@@ -4,13 +4,11 @@ import android.app.Application
 import androidx.lifecycle.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
-import me.branwin.boojet.data.BoojetDatabase
-import me.branwin.boojet.data.Category
-import me.branwin.boojet.data.CategoryRepository
-import me.branwin.boojet.data.EntryRepository
+import me.branwin.boojet.data.*
 
 class MainViewModel(application: Application): ViewModel() {
     val allCategories: MutableStateFlow<List<Category>> = MutableStateFlow(emptyList())
+    val allEntries: MutableStateFlow<List<Entry>> = MutableStateFlow(emptyList())
 
     private val categoryRepository: CategoryRepository
     private val entryRepository: EntryRepository
@@ -21,8 +19,11 @@ class MainViewModel(application: Application): ViewModel() {
         entryRepository = EntryRepository(db.entryDao())
 
         viewModelScope.launch {
-            categoryRepository.getAllCategories().collect { categories ->
-                allCategories.value = categories
+            categoryRepository.getAllCategories().collect {
+                allCategories.value = it
+            }
+            entryRepository.getAllEntries().collect() {
+                allEntries.value = it
             }
         }
     }
@@ -30,6 +31,12 @@ class MainViewModel(application: Application): ViewModel() {
     fun insertCategory(category: Category) {
         viewModelScope.launch {
             categoryRepository.insertCategory(category)
+        }
+    }
+
+    fun insertEntry(entryWithCategories: EntryWithCategories) {
+        viewModelScope.launch {
+            entryRepository.insertEntry(entryWithCategories)
         }
     }
 }

@@ -6,11 +6,11 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 
-@Database(entities = [Category::class, Entry::class], version = 1, exportSchema = false)
+@Database(entities = [Category::class, Entry::class, EntryCategoryCrossRef::class], version = 3, exportSchema = false)
 @TypeConverters(Converters::class)
 abstract class BoojetDatabase: RoomDatabase() {
     abstract fun categoryDao(): CategoryDao
-    abstract  fun entryDao(): EntryDao
+    abstract fun entryDao(): EntryDao
 
     companion object {
         @Volatile private var instance: BoojetDatabase? = null
@@ -20,7 +20,9 @@ abstract class BoojetDatabase: RoomDatabase() {
                     context.applicationContext,
                     BoojetDatabase::class.java,
                     "boojet"
-                ).build().also { instance = it }
+                )
+                    .fallbackToDestructiveMigration()
+                    .build().also { instance = it }
             }
     }
 }

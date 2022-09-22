@@ -1,8 +1,12 @@
 package me.branwin.boojet.data
 
 class EntryRepository(private val entryDao: EntryDao) {
-    suspend fun insertEntry(entry: Entry) =
-        entryDao.insert(entry)
+    suspend fun insertEntry(entryWc: EntryWithCategories) {
+        entryDao.insert(entryWc.entry)
+        entryWc.categories.forEach {
+            entryDao.addCategoryToEntry(entryWc.entry.entryId, it.categoryId)
+        }
+    }
 
     suspend fun deleteEntry(entry: Entry) =
         entryDao.delete(entry)
@@ -15,4 +19,7 @@ class EntryRepository(private val entryDao: EntryDao) {
 
     fun getAllEntriesByCategory(categoryId: Long) =
         entryDao.getAllByCategory(categoryId)
+
+    fun getAllEntriesWithCategories() =
+        entryDao.getEntriesWithCategories()
 }

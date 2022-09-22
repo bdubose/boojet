@@ -6,4 +6,11 @@
     <string name="how_was_the_service">Tip (%)</string>
     <string name="round_up_tip">Round up tip?</string>
     <string name="text_expense_amount">Test Expense Amount</string>
+    <string name="tip_calculator_screen_label">Tip Calculator</string>
+    <string name="entry_screen_label">Entry</string>
+    <string name="list_screen_label">List</string>
+    <string name="entry_name">Name</string>
+    <string name="entry_amount">Amount</string>
+    <string name="new_cat_name">New Category Name</string>
+    <string name="pick_category">Pick or Create a Category</string>
 </resources>
