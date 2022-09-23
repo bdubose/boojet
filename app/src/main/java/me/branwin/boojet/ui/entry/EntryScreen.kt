@@ -71,7 +71,7 @@ fun EntryScreen(
         ) {
             // State
             var name by remember { mutableStateOf("") }
-            var amount by remember { mutableStateOf(0.0f) }
+            var amountInput by remember { mutableStateOf("") }
 
             // Heading
             Text(
@@ -91,8 +91,8 @@ fun EntryScreen(
 
             // Amount
             TextField(
-                if (amount > 0.0) amount.toString() else "",
-                onValueChange = { amount = it.toFloatOrNull() ?: 0.0f },
+                amountInput,
+                onValueChange = { amountInput = it },
                 label = { Text(stringResource(R.string.entry_amount), modifier = Modifier.fillMaxWidth()) },
                 textStyle = TextStyle(textAlign = TextAlign.End),
                 singleLine = true,
@@ -130,17 +130,17 @@ fun EntryScreen(
             ActionRow(
                 onClear = {
                     name = ""
-                    amount = 0.0f
+                    amountInput = ""
                     entryViewModel.reset()
                     focusManager.clearFocus()
                 },
                 onSave = {
                     vm.insertEntry(EntryWithCategories(
-                        entry = me.branwin.boojet.data.Entry(name = name, amount = amount),
+                        entry = me.branwin.boojet.data.Entry(name = name, amount = amountInput.toFloatOrNull() ?: 0.0f),
                         categories = entryViewModel.selectedCategories
                     ))
                     name = ""
-                    amount = 0.0f
+                    amountInput = ""
                     entryViewModel.reset()
                     focusManager.clearFocus()
                     scope.launch {
