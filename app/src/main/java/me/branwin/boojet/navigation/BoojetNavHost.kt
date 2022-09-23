@@ -1,5 +1,6 @@
 package me.branwin.boojet.navigation
 
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
@@ -14,6 +15,7 @@ import me.branwin.boojet.viewmodels.MainViewModel
 fun BoojetNavHost(
     navController: NavHostController,
     viewModel: MainViewModel,
+    snackbarHostState: SnackbarHostState,
     modifier: Modifier = Modifier,
 ) {
     NavHost(
@@ -22,7 +24,7 @@ fun BoojetNavHost(
         modifier = modifier
     ) {
         composable(Entry.route) {
-            EntryScreen(viewModel)
+            EntryScreen(viewModel, snackbarHostState)
         }
         composable(List.route) {
             ListScreen(viewModel)

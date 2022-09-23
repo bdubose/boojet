@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -37,7 +38,10 @@ fun BoojetApp() {
         val currentScreen = boojetTabRowScreens.find { it.route == currentDestination?.route } ?: Entry
         val mainViewModel = MainViewModelFactory(LocalContext.current.applicationContext as Application)
             .create(MainViewModel::class.java)
+        val snackbarHostState = remember { SnackbarHostState() }
+
         Scaffold(
+            snackbarHost = { SnackbarHost(hostState = snackbarHostState)},
             bottomBar = {
                 BoojetNavigationBar(
                     currentScreen = currentScreen,
@@ -49,6 +53,7 @@ fun BoojetApp() {
             BoojetNavHost(
                 navController = navController,
                 viewModel = mainViewModel,
+                snackbarHostState = snackbarHostState,
                 modifier = Modifier.padding(innerPadding)
             )
         }

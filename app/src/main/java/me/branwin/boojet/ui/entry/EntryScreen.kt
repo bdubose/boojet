@@ -40,7 +40,9 @@ import me.branwin.boojet.viewmodels.MainViewModel
 @Composable
 fun EntryScreen(
     vm: MainViewModel,
-    entryViewModel: EntryViewModel = viewModel()
+    snackbarHostState: SnackbarHostState,
+    entryViewModel: EntryViewModel = viewModel(),
+    focusManager: FocusManager = LocalFocusManager.current
 ) {
     val scope = rememberCoroutineScope()
     val sheetState = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
@@ -100,7 +102,12 @@ fun EntryScreen(
             // Category Selection
             Button(
                 modifier = Modifier.fillMaxWidth(),
-                onClick = { scope.launch { sheetState.show() } },
+                onClick = {
+                    focusManager.clearFocus()
+                    scope.launch {
+                        sheetState.show()
+                    }
+                },
             ) {
                 Text("Add Categories")
             }
@@ -125,12 +132,20 @@ fun EntryScreen(
                     name = ""
                     amount = 0.0f
                     entryViewModel.reset()
+                    focusManager.clearFocus()
                 },
                 onSave = {
                     vm.insertEntry(EntryWithCategories(
                         entry = me.branwin.boojet.data.Entry(name = name, amount = amount),
                         categories = entryViewModel.selectedCategories
                     ))
+                    name = ""
+                    amount = 0.0f
+                    entryViewModel.reset()
+                    focusManager.clearFocus()
+                    scope.launch {
+                        snackbarHostState.showSnackbar("Entry saved")
+                    }
                 }
             )
         }
