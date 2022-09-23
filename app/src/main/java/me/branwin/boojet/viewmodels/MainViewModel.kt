@@ -22,6 +22,8 @@ class MainViewModel(application: Application): ViewModel() {
             categoryRepository.getAllCategories().collect {
                 allCategories.value = it
             }
+        }
+        viewModelScope.launch {
             entryRepository.getAllEntries().collect {
                 allEntries.value = it
             }

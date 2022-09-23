@@ -2,8 +2,6 @@
 
 package me.branwin.boojet.ui.entry
 
-
-import android.app.Application
 import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
@@ -22,14 +20,12 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusManager
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -40,16 +36,14 @@ import me.branwin.boojet.data.EntryWithCategories
 import me.branwin.boojet.navigation.Entry
 import me.branwin.boojet.ui.shared.NextNumberKeyboard
 import me.branwin.boojet.viewmodels.MainViewModel
-import me.branwin.boojet.viewmodels.MainViewModelFactory
 
 @Composable
 fun EntryScreen(
+    vm: MainViewModel,
     entryViewModel: EntryViewModel = viewModel()
 ) {
     val scope = rememberCoroutineScope()
     val sheetState = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
-    val vm = MainViewModelFactory(LocalContext.current.applicationContext as Application)
-        .create(MainViewModel::class.java)
 
     ModalBottomSheetLayout(
         sheetContent = {
@@ -233,10 +227,4 @@ fun CategoryAdder(
             focusManager.clearFocus()
         })
     )
-}
-
-@Preview
-@Composable
-fun DefaultPreview() {
-    EntryScreen()
 }

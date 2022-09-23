@@ -8,10 +8,12 @@ import androidx.navigation.compose.composable
 import me.branwin.boojet.ui.entry.EntryScreen
 import me.branwin.boojet.ui.list.ListScreen
 import me.branwin.boojet.ui.tipcalculator.TipCalculatorScreen
+import me.branwin.boojet.viewmodels.MainViewModel
 
 @Composable
 fun BoojetNavHost(
     navController: NavHostController,
+    viewModel: MainViewModel,
     modifier: Modifier = Modifier,
 ) {
     NavHost(
@@ -20,10 +22,10 @@ fun BoojetNavHost(
         modifier = modifier
     ) {
         composable(Entry.route) {
-            EntryScreen()
+            EntryScreen(viewModel)
         }
         composable(List.route) {
-            ListScreen()
+            ListScreen(viewModel)
         }
         composable(TipCalculator.route) {
             TipCalculatorScreen()
