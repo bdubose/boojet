@@ -27,18 +27,34 @@ import java.text.NumberFormat
 @Composable
 fun TipCalculatorScreen() {
     val focusManager = LocalFocusManager.current
+    val currencyFormat = NumberFormat.getCurrencyInstance()
 
     val calcTipStr = stringResource(R.string.calculate_tip)
 
-    var amountInput by remember { mutableStateOf("") }
+    var amountInput by remember { mutableStateOf("0") }
     val amount = amountInput.toDoubleOrNull() ?: 0.0
-    var tipInput by remember { mutableStateOf("") }
+    var tipInput by remember { mutableStateOf("20") }
     val tipPercent = tipInput.toDoubleOrNull() ?: 0.0
-    var roundUp by remember { mutableStateOf(false) }
+    var roundUpTip by remember { mutableStateOf(false) }
+    var roundUpTotal by remember { mutableStateOf(false) }
 
 
-    val tip = calculateTip(amount, tipPercent, roundUp)
+    val tip: Double
+    val total: Double
 
+    if (roundUpTotal) {
+        // calculate original total rounded up, then update the tip
+        val originalTip = calculateTip(amount, tipPercent, roundUpTip)
+        total = calculateTotal(amount, originalTip, roundUpTotal)
+        tip = total - amount
+    } else {
+        tip = calculateTip(amount, tipPercent, roundUpTip)
+        total = calculateTotal(amount, tip, roundUpTotal)
+    }
+
+    // This causes NaNs, but will update the tip % input correct when we have values
+    //val decimalFormat = DecimalFormat("##.##")
+    //tipInput = decimalFormat.format((tip / amount) * 100)
 
     Column(
         modifier = Modifier.padding(32.dp),
@@ -76,12 +92,23 @@ fun TipCalculatorScreen() {
         ) {
             tipInput = it
         }
-        RoundTipRow(roundUp) {
-            roundUp = it
+        RoundTipRow(roundUpTip, true) {
+            roundUpTip = it
+            if (it) roundUpTotal = false
+        }
+        RoundTipRow(roundUpTotal, false) {
+            roundUpTotal = it
+            if (it) roundUpTip = false
         }
         Spacer(Modifier.height(24.dp))
         Text(
-            stringResource(R.string.tip_amount, tip),
+            stringResource(R.string.tip_amount, currencyFormat.format(tip)),
+            modifier = Modifier.align(Alignment.CenterHorizontally),
+            fontSize = 20.sp,
+            fontWeight = FontWeight.Bold,
+        )
+	    Text(
+            stringResource(R.string.tip_total, currencyFormat.format(total)),
             modifier = Modifier.align(Alignment.CenterHorizontally),
             fontSize = 20.sp,
             fontWeight = FontWeight.Bold,
@@ -90,14 +117,14 @@ fun TipCalculatorScreen() {
 }
 
 @Composable
-fun RoundTipRow(roundUp: Boolean, modifier: Modifier = Modifier, onRoundUpChanged: (Boolean) -> Unit) {
+fun RoundTipRow(roundUp: Boolean, isTip: Boolean, modifier: Modifier = Modifier, onRoundUpChanged: (Boolean) -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .size(48.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Text(stringResource(R.string.round_up_tip))
+        Text(stringResource(if (isTip) R.string.round_up_tip else R.string.round_up_total))
         Switch(
             roundUp,
             colors = SwitchDefaults.colors(
@@ -112,10 +139,16 @@ fun RoundTipRow(roundUp: Boolean, modifier: Modifier = Modifier, onRoundUpChange
 }
 
 @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
-internal fun calculateTip(amount: Double, tipPercent: Double = 15.0, roundUp: Boolean = false): String {
+internal fun calculateTip(amount: Double, tipPercent: Double = 15.0, roundUpTip: Boolean = false): Double {
     var tip = tipPercent / 100 * amount
-    if (roundUp) tip = kotlin.math.ceil(tip)
-    return NumberFormat.getCurrencyInstance().format(tip)
+    if (roundUpTip) tip = kotlin.math.ceil(tip)
+    return tip
+}
+
+fun calculateTotal(amount: Double, tip: Double, roundUpTotal: Boolean = false): Double {
+    var total = amount + tip
+    if (roundUpTotal) total = kotlin.math.ceil(total)
+    return total
 }
 
 @Preview

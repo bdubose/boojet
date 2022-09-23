@@ -22,7 +22,7 @@ class MainViewModel(application: Application): ViewModel() {
             categoryRepository.getAllCategories().collect {
                 allCategories.value = it
             }
-            entryRepository.getAllEntries().collect() {
+            entryRepository.getAllEntries().collect {
                 allEntries.value = it
             }
         }
