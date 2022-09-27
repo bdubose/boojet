@@ -137,7 +137,7 @@ fun EntryScreen(
                 onSave = {
                     vm.insertEntry(EntryWithCategories(
                         entry = me.branwin.boojet.data.Entry(name = name, amount = amountInput.toFloatOrNull() ?: 0.0f),
-                        categories = entryViewModel.selectedCategories
+                        categories = entryViewModel.selectedCategories.toMutableList()
                     ))
                     name = ""
                     amountInput = ""

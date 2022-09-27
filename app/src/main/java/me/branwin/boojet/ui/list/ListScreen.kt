@@ -2,6 +2,7 @@ package me.branwin.boojet.ui.list
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -17,7 +18,9 @@ fun ListScreen(vm: MainViewModel) {
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         vm.allEntries.collectAsState().value.map {
-            Text("Name: ${it.name}  Amount: ${it.amount}")
+            Row {
+                Text("Name: ${it.name}  Amount: ${it.amount}")
+            }
         }
     }
 }

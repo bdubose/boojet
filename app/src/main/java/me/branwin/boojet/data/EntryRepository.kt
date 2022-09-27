@@ -2,9 +2,9 @@ package me.branwin.boojet.data
 
 class EntryRepository(private val entryDao: EntryDao) {
     suspend fun insertEntry(entryWc: EntryWithCategories) {
-        entryDao.insert(entryWc.entry)
+        val entryId = entryDao.insert(entryWc.entry)
         entryWc.categories.forEach {
-            entryDao.addCategoryToEntry(entryWc.entry.entryId, it.categoryId)
+            entryDao.addCategoryToEntry(entryId, it.categoryId)
         }
     }
 

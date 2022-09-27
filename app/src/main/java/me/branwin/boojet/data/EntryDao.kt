@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface EntryDao {
     @Insert
-    suspend fun insert(entry: Entry)
+    suspend fun insert(entry: Entry): Long
 
     @Delete
     suspend fun delete(entry: Entry)
