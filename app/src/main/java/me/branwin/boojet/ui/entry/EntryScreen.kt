@@ -155,7 +155,8 @@ fun EntryScreen(
 @Composable
 fun ActionRow(onClear: () -> Unit, onSave: () -> Unit) {
     Row(
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
     ) {
         Button(onClick = onClear) {
             Text("Clear")
@@ -185,6 +186,7 @@ fun CategorySelectionSheet(
                     stringResource(R.string.pick_category),
                     Modifier
                         .align(Alignment.CenterHorizontally)
+                        .padding(start = 10.dp)
                         .fillMaxWidth(),
                     fontSize = 24.sp
                 )

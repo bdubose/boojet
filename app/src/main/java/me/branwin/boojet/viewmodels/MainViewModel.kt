@@ -8,7 +8,7 @@ import me.branwin.boojet.data.*
 
 class MainViewModel(application: Application): ViewModel() {
     val allCategories: MutableStateFlow<List<Category>> = MutableStateFlow(emptyList())
-    val allEntries: MutableStateFlow<List<Entry>> = MutableStateFlow(emptyList())
+    val allEntries: MutableStateFlow<List<EntryWithCategories>> = MutableStateFlow(emptyList())
 
     private val categoryRepository: CategoryRepository
     private val entryRepository: EntryRepository
@@ -24,7 +24,7 @@ class MainViewModel(application: Application): ViewModel() {
             }
         }
         viewModelScope.launch {
-            entryRepository.getAllEntries().collect {
+            entryRepository.getAllEntriesWithCategories().collect {
                 allEntries.value = it
             }
         }

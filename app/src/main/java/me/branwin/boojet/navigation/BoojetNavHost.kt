@@ -20,7 +20,7 @@ fun BoojetNavHost(
 ) {
     NavHost(
         navController = navController,
-        startDestination = TipCalculator.route,
+        startDestination = Entry.route,
         modifier = modifier
     ) {
         composable(Entry.route) {

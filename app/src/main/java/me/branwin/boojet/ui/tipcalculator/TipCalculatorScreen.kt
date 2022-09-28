@@ -107,7 +107,7 @@ fun TipCalculatorScreen() {
             fontSize = 20.sp,
             fontWeight = FontWeight.Bold,
         )
-	    Text(
+       Text(
             stringResource(R.string.tip_total, currencyFormat.format(total)),
             modifier = Modifier.align(Alignment.CenterHorizontally),
             fontSize = 20.sp,
