@@ -21,30 +21,43 @@ val moneyFormat: NumberFormat = NumberFormat.getCurrencyInstance()
 @Composable
 fun ListScreen(vm: MainViewModel) {
     val entries = vm.allEntries.collectAsState().value
-    LazyColumn(Modifier.fillMaxWidth()) {
-        items(entries) {
-            ElevatedCard(
-                Modifier.fillMaxWidth().padding(10.dp)
+    Column(Modifier.fillMaxWidth()) {
+        ElevatedCard(
+            Modifier.fillMaxWidth().padding(10.dp)
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(10.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
             ) {
-                Column(Modifier.padding(10.dp)) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ){
-                        Text(it.entry.name, fontSize = 20.sp)
-                        Text(moneyFormat.format(it.entry.amount), fontSize = 24.sp)
-                    }
-                    Row {
-                        Text(dateFormat.format(it.entry.timestamp))
-                    }
-                    Row {
-                        it.categories.map {
-                            InputChip(
-                                selected = true,
-                                onClick = { /*TODO*/ },
-                                label = { Text(it.name)},
-                                modifier = Modifier.padding(4.dp)
-                            )
+                Text("Total", fontSize = 24.sp)
+                Text(moneyFormat.format(entries.sumOf { it.entry.amount.toDouble() }), fontSize = 24.sp)
+            }
+        }
+        LazyColumn(Modifier.fillMaxWidth()) {
+            items(entries) {
+                ElevatedCard(
+                    Modifier.fillMaxWidth().padding(10.dp)
+                ) {
+                    Column(Modifier.padding(10.dp)) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ){
+                            Text(it.entry.name, fontSize = 20.sp)
+                            Text(moneyFormat.format(it.entry.amount), fontSize = 24.sp)
+                        }
+                        Row {
+                            Text(dateFormat.format(it.entry.timestamp))
+                        }
+                        Row {
+                            it.categories.map {
+                                InputChip(
+                                    selected = true,
+                                    onClick = { /*TODO*/ },
+                                    label = { Text(it.name)},
+                                    modifier = Modifier.padding(4.dp)
+                                )
+                            }
                         }
                     }
                 }
